@@ -9,7 +9,7 @@
  const stage=document.getElementById('stage');
  const xhtml='http://www.w3.org/1999/xhtml';
  try{Object.defineProperty(document,'body',{configurable:true,get:()=>stage});}catch{}
- const oldCreate=document.createElement.bind(document); document.createElement=(name)=>oldCreate.call(document,name);
+ const oldCreate=document.createElement.bind(document); document.createElement=(name)=>document.createElementNS(xhtml,name);
  function loadScript(old){return new Promise(done=>{const s=document.createElement('script'); for(const a of old.attributes||[])s.setAttribute(a.name,a.value); if(old.src){s.src=new URL(old.getAttribute('src'),base).href;s.onload=done;s.onerror=done;}else{s.textContent=old.textContent;stage.appendChild(s);done();}})}
  fetch(base+'index.html').then(r=>r.text()).then(text=>{
   const doc=new DOMParser().parseFromString(text,'text/html');
