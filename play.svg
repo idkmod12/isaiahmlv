@@ -15,7 +15,7 @@
   const doc=new DOMParser().parseFromString(text,'text/html');
   const b=document.createElement('base'); b.href=base; stage.appendChild(b);
   doc.querySelectorAll('link[rel="stylesheet"],style').forEach(n=>stage.appendChild(document.importNode(n,true)));
-  stage.insertAdjacentHTML('beforeend',doc.body?doc.body.innerHTML:text);
+  (doc.body?Array.from(doc.body.childNodes):[]).forEach(n=>stage.appendChild(document.importNode(n,true)));
   const scripts=[...stage.querySelectorAll('script')]; scripts.forEach(s=>s.remove());
   return scripts.reduce((p,s)=>p.then(()=>loadScript(s)),Promise.resolve());
  }).catch(e=>{stage.innerHTML='<div style="color:white;font:18px system-ui;padding:30px">Game could not load.</div>'; console.error(e)});
