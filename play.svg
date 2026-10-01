@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:fixed;inset:0;background:#000">
+<foreignObject x="0" y="0" width="100%" height="100%"><body xmlns="http://www.w3.org/1999/xhtml" style="margin:0;width:100%;height:100%;min-height:100vh;background:#000;overflow:hidden"><div id="stage" style="width:100%;height:100%;min-height:100vh"></div>
+<script><![CDATA[
+(()=>{
+ const q=new URLSearchParams(location.search), repo=q.get('repo')||'2', game=q.get('game');
+ const bases={1:'https://cdn.jsdelivr.net/gh/idkmod12/games-1@main/games/',2:'https://cdn.jsdelivr.net/gh/idkmod12/isaiahmlv@main/games/',3:'https://cdn.jsdelivr.net/gh/idkmod12/games-3@main/games/',4:'https://cdn.jsdelivr.net/gh/idkmod12/games-4@main/games/'};
+ const base=(bases[repo]||bases[2])+encodeURIComponent(game||'')+'/';
+ const stage=document.getElementById('stage');
+ const xhtml='http://www.w3.org/1999/xhtml';
+ try{Object.defineProperty(document,'body',{configurable:true,get:()=>stage});}catch{}
+ const oldCreate=document.createElement.bind(document); document.createElement=(name)=>oldCreate.call(document,name);
+ function loadScript(old){return new Promise(done=>{const s=document.createElement('script'); for(const a of old.attributes||[])s.setAttribute(a.name,a.value); if(old.src){s.src=new URL(old.getAttribute('src'),base).href;s.onload=done;s.onerror=done;}else{s.textContent=old.textContent;stage.appendChild(s);done();}})}
+ fetch(base+'index.html').then(r=>r.text()).then(text=>{
+  const doc=new DOMParser().parseFromString(text,'text/html');
+  const b=document.createElement('base'); b.href=base; stage.appendChild(b);
+  doc.querySelectorAll('link[rel="stylesheet"],style').forEach(n=>stage.appendChild(document.importNode(n,true)));
+  stage.insertAdjacentHTML('beforeend',doc.body?doc.body.innerHTML:text);
+  const scripts=[...stage.querySelectorAll('script')]; scripts.forEach(s=>s.remove());
+  return scripts.reduce((p,s)=>p.then(()=>loadScript(s)),Promise.resolve());
+ }).catch(e=>{stage.innerHTML='<div style="color:white;font:18px system-ui;padding:30px">Game could not load.</div>'; console.error(e)});
+})();
+]]></script></body></foreignObject></svg>
